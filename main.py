@@ -1,4 +1,5 @@
 import json
+import time
 
 import keys
 import requests
@@ -17,25 +18,30 @@ g_auth.LocalWebserverAuth()
 g_drive: GoogleDrive = GoogleDrive(g_auth)
 
 
-@bot.message_handler(commands=['start', 'hello'])
+@bot.message_handler(commands=['up', 'start', 'hi', 'hello'])
 def send_welcome(message):
     # just to make sure the bot is alive
-    bot.reply_to(message, "Howdy, how are you doing?")
+    bot.reply_to(message,
+                 "Hi, I'm CMP-T-bot!\nI am here to assist the material team with automatic materials uploading.")
 
 
 @bot.message_handler(content_types=['document'])
-def echo_files(message):
+def upload_documents(message):
     # Only upload media from materials group
     if message.chat.id != GROUP_ID:
         return
+
+    # logs for monitoring
     print(message.document)
     doc = message.document
     file_name, file_id, mime_type = doc.file_name, doc.file_id, doc.mime_type
     bot.reply_to(message, f'Got it {file_name}')
     file_path = bot.get_file(file_id).file_path
+
     # download the file from telegram
     url = f'https://api.telegram.org/file/bot{TELEGRAM_BOT_TOKEN}/{file_path}'
     response = requests.get(url)
+
     # preparing the file for sending
     param = {
         "name": file_name,
@@ -50,9 +56,13 @@ def echo_files(message):
                       headers={"Authorization": "Bearer " + g_auth.credentials.access_token},
                       files=file
                       )
+    # logs for monitoring
     print(r.text)
+
     # Send me a message with status code to the user id
     bot.send_message(chat_id=USER_ID, text=f'Trying to upload {file_name} ended with status {r.status_code}', )
+    # have some rest we don't want our free server to crash :)
+    time.sleep(5)
 
 
 print("bot has started")
