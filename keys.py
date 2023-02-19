@@ -1,4 +1,5 @@
-telegram_token = "your token"
-drive_token = "your token"
-group_id = The only group that you wnat to upload documents from
-user_id = the user to log the uploads to
+telegram_token = "your_token"
+group_id = -882896630
+user_id = 1267062311
+folder_id = "1Jiu11p_D68WNDnCeTlugsQ83GhaYConi"
+
