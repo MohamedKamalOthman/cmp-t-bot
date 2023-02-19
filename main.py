@@ -3,16 +3,18 @@ import json
 import keys
 import requests
 import telebot
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
 TELEGRAM_BOT_TOKEN = keys.telegram_token
-DRIVE_BOT_TOKEN = keys.drive_token
 GROUP_ID = keys.group_id
 USER_ID = keys.user_id
+folder = keys.folder_id
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
-headers = {
-    "Authorization": f"Bearer {DRIVE_BOT_TOKEN}"
-}
+g_auth = GoogleAuth()
+g_auth.LocalWebserverAuth()
+g_drive: GoogleDrive = GoogleDrive(g_auth)
 
 
 @bot.message_handler(commands=['start', 'hello'])
@@ -37,7 +39,7 @@ def echo_files(message):
     # preparing the file for sending
     param = {
         "name": file_name,
-        "parents": ["1Jiu11p_D68WNDnCeTlugsQ83GhaYConi"]  # google drive folder id
+        "parents": [folder]  # google drive folder id
     }
     file = {
         'data': ('metadata', json.dumps(param), 'application/json;charset=UTF-8'),
@@ -45,7 +47,7 @@ def echo_files(message):
     }
     # upload file to drive
     r = requests.post("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
-                      headers=headers,
+                      headers={"Authorization": "Bearer " + g_auth.credentials.access_token},
                       files=file
                       )
     print(r.text)
