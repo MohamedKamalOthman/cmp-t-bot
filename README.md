@@ -18,6 +18,9 @@ I am here to assist the material team with automatic materials uploading.
   - requests 2.25.1
   - pytelegrambotapi 4.10.0
   - pydrive 1.3.1
+- To create your own bot you need:
+  - Telegram bot token you can get from botFather
+  - google credintails you can read more about it from (here)[https://developers.google.com/identity/protocols/oauth2]
 
 ## Run Information
 - To start the bot simply just type `python main.py`
